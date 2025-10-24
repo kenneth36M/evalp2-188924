@@ -8,25 +8,29 @@ if (isset($_SESSION['user_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
     
-    $sql = "SELECT id, username, password FROM users WHERE username = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($row = $result->fetch_assoc()) {
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['user_id'] = $row['id'];
-            $_SESSION['username'] = $row['username'];
-            header("Location: dashboard.php");
-            exit();
+    if (empty($username) || empty($password)) {
+        $error = "Ambos campos son requeridos";
+    } else {
+        $sql = "SELECT id, username, password FROM users WHERE username = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            if (password_verify($password, $row['password'])) {
+                $_SESSION['user_id'] = $row['id'];
+                $_SESSION['username'] = $row['username'];
+                $_SESSION['last_login'] = date('Y-m-d H:i:s');
+                header("Location: dashboard.php");
+                exit();
+            }
         }
+        
+        $error = "Usuario o contraseña incorrectos";
     }
-    
-    $error = "Usuario o contraseña incorrectos";
 }
 ?>
 <!DOCTYPE html>
