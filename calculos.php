@@ -9,11 +9,13 @@ $error = '';
 $result = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Validación de campos
-    if (empty($_POST['figura']) || 
-        (($_POST['figura'] == 'cilindro' || $_POST['figura'] == 'rectangulo') && 
-         (empty($_POST['altura']) || empty($_POST['base'])))) {
-        $error = 'Todos los campos son requeridos';
+    // Validación mejorada de campos
+    if (empty($_POST['figura'])) {
+        $error = 'Debe seleccionar una figura';
+    } else if ($_POST['figura'] != 'cilindro' && $_POST['figura'] != 'rectangulo') {
+        $error = 'Figura no válida';
+    } else if (empty($_POST['altura']) || empty($_POST['base'])) {
+        $error = 'Debe ingresar todos los valores numéricos';
     } else {
         $figura = $_POST['figura'];
         
@@ -21,8 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $radio = floatval($_POST['base']);
             $altura = floatval($_POST['altura']);
             
-            if ($radio <= 0 || $altura <= 0) {
-                $error = 'Los valores deben ser mayores que 0';
+            if ($radio <= 0) {
+                $error = 'El radio debe ser mayor que 0';
+            } else if ($altura <= 0) {
+                $error = 'La altura debe ser mayor que 0';
             } else {
                 $area = 2 * pi() * $radio * ($radio + $altura);
                 $volumen = pi() * $radio * $radio * $altura;
@@ -36,8 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $base = floatval($_POST['base']);
             $altura = floatval($_POST['altura']);
             
-            if ($base <= 0 || $altura <= 0) {
-                $error = 'Los valores deben ser mayores que 0';
+            if ($base <= 0) {
+                $error = 'La base debe ser mayor que 0';
+            } else if ($altura <= 0) {
+                $error = 'La altura debe ser mayor que 0';
             } else {
                 $area = $base * $altura;
                 $perimetro = 2 * ($base + $altura);
