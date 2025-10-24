@@ -19,6 +19,7 @@ if (!isset($_SESSION['user_id'])) {
         <h2>Bienvenido, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
         <div class="menu-options">
             <a href="calculos.php" class="menu-btn">Calcular Áreas y Volúmenes</a>
+            <a href="cuadrantes.php" class="menu-btn">Identificación de Cuadrantes</a>
             <a href="logout.php" class="logout-btn">Cerrar Sesión</a>
         </div>
     </div>
