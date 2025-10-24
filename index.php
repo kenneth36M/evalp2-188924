@@ -46,29 +46,91 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Iniciar Sesión - Sistema de Cálculos Matemáticos</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>">
 </head>
 <body>
+    <!-- Partículas flotantes de fondo -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <div class="login-container">
-        <h2>Iniciar Sesión</h2>
+        <div class="login-header">
+            <div class="login-icon">🧮</div>
+            <h2>Iniciar Sesión</h2>
+            <p class="login-subtitle">Accede a tu cuenta para continuar</p>
+        </div>
+        
         <?php if (isset($error)): ?>
-            <div class="error"><?php echo $error; ?></div>
+            <div class="error">
+                <span class="error-icon">⚠️</span>
+                <?php echo $error; ?>
+            </div>
         <?php endif; ?>
-        <form method="POST" action="">
+        
+        <form method="POST" action="" class="login-form">
             <div class="form-group">
-                <label for="username">Usuario:</label>
-                <input type="text" id="username" name="username" required>
+                <label for="username">
+                    <span class="label-icon">👤</span>
+                    Usuario
+                </label>
+                <input type="text" id="username" name="username" required placeholder="Ingresa tu usuario">
             </div>
+            
             <div class="form-group">
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required>
+                <label for="password">
+                    <span class="label-icon">🔒</span>
+                    Contraseña
+                </label>
+                <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña">
             </div>
-            <button type="submit">Iniciar Sesión</button>
+            
+            <button type="submit" class="login-btn">
+                <span class="btn-text">Iniciar Sesión</span>
+                <span class="btn-icon">→</span>
+            </button>
         </form>
+        
         <div class="form-footer">
             <p>¿No tienes una cuenta? <a href="register.php">Regístrate aquí</a></p>
         </div>
     </div>
+
+    <script>
+        // Efecto de partículas interactivas
+        document.addEventListener('mousemove', function(e) {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.02;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                particle.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Animación de entrada para los campos
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
