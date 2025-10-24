@@ -51,25 +51,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Identificación de Cuadrantes</title>
+    <title>Identificación de Cuadrantes - Sistema Matemático</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 </head>
 <body>
+    <!-- Partículas flotantes de fondo -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <div class="calculator-container">
-        <h2>Identificación de Cuadrantes</h2>
+        <div class="page-header">
+            <div class="page-icon">📊</div>
+            <h2>Identificación de Cuadrantes</h2>
+            <p class="page-subtitle">Visualiza y identifica puntos en el plano cartesiano</p>
+        </div>
         
         <?php if ($error): ?>
-            <div class="error"><?php echo $error; ?></div>
+            <div class="error">
+                <span class="error-icon">⚠️</span>
+                <?php echo $error; ?>
+            </div>
         <?php endif; ?>
 
         <div class="plane-info">
-            <p><strong>Reglas de los cuadrantes:</strong></p>
-            <ul>
-                <li>Cuadrante I: X > 0, Y > 0</li>
-                <li>Cuadrante II: X < 0, Y > 0</li>
-                <li>Cuadrante III: X < 0, Y < 0</li>
-                <li>Cuadrante IV: X > 0, Y < 0</li>
-            </ul>
+            <h3>🎯 Reglas de los Cuadrantes</h3>
+            <div class="quadrant-rules">
+                <div class="quadrant-rule quadrant-i">
+                    <span class="quadrant-color"></span>
+                    <span class="quadrant-text"><strong>Cuadrante I:</strong> X > 0, Y > 0</span>
+                </div>
+                <div class="quadrant-rule quadrant-ii">
+                    <span class="quadrant-color"></span>
+                    <span class="quadrant-text"><strong>Cuadrante II:</strong> X < 0, Y > 0</span>
+                </div>
+                <div class="quadrant-rule quadrant-iii">
+                    <span class="quadrant-color"></span>
+                    <span class="quadrant-text"><strong>Cuadrante III:</strong> X < 0, Y < 0</span>
+                </div>
+                <div class="quadrant-rule quadrant-iv">
+                    <span class="quadrant-color"></span>
+                    <span class="quadrant-text"><strong>Cuadrante IV:</strong> X > 0, Y < 0</span>
+                </div>
+            </div>
         </div>
 
         <form method="POST" action="">
@@ -99,20 +132,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        // Visualización del plano cartesiano
+        // Visualización del plano cartesiano mejorada
         function drawPlane() {
             const canvas = document.createElement('canvas');
-            canvas.width = 400;
-            canvas.height = 400;
+            canvas.width = 500;
+            canvas.height = 500;
             const ctx = canvas.getContext('2d');
-            const scale = 40; // Escala para las coordenadas (40 píxeles = 1 unidad)
+            const scale = 50; // Escala para las coordenadas (50 píxeles = 1 unidad)
             
             // Configurar el plano
             ctx.translate(canvas.width/2, canvas.height/2);
             ctx.scale(1, -1);
 
-            // Dibujar cuadrícula
-            ctx.strokeStyle = '#ddd';
+            // Fondo con gradiente sutil
+            const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, canvas.width/2);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+            gradient.addColorStop(1, 'rgba(240, 248, 255, 0.3)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+
+            // Dibujar cuadrícula con colores suaves
+            ctx.strokeStyle = 'rgba(200, 200, 200, 0.3)';
             ctx.lineWidth = 0.5;
             for(let i = -canvas.width/2; i <= canvas.width/2; i += scale) {
                 // Líneas verticales
@@ -127,9 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ctx.stroke();
             }
             
-            // Dibujar ejes principales
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 2;
+            // Dibujar ejes principales con colores vibrantes
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 3;
             ctx.beginPath();
             ctx.moveTo(-canvas.width/2, 0);
             ctx.lineTo(canvas.width/2, 0);
@@ -137,28 +177,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ctx.lineTo(0, canvas.height/2);
             ctx.stroke();
 
-            // Dibujar marcas en los ejes
+            // Dibujar marcas en los ejes con mejor estilo
             ctx.scale(1, -1); // Invertir para el texto
-            ctx.font = '12px Arial';
-            ctx.fillStyle = '#333';
-            for(let i = -4; i <= 4; i++) {
+            ctx.font = 'bold 14px Inter, Arial, sans-serif';
+            ctx.fillStyle = '#2c3e50';
+            for(let i = -5; i <= 5; i++) {
                 if(i !== 0) {
                     // Marcas en X
-                    ctx.fillText(i.toString(), i * scale - 5, 20);
+                    ctx.fillText(i.toString(), i * scale - 8, 25);
                     // Marcas en Y
-                    ctx.fillText(i.toString(), 10, -i * scale + 5);
+                    ctx.fillText(i.toString(), 15, -i * scale + 8);
                 }
             }
 
-            // Dibujar etiquetas de los cuadrantes
-            ctx.font = '14px Arial';
-            ctx.fillStyle = '#666';
-            ctx.fillText('I', 80, -80);
-            ctx.fillText('II', -80, -80);
-            ctx.fillText('III', -80, 80);
-            ctx.fillText('IV', 80, 80);
-            ctx.fillText('X', canvas.width/2 - 20, 20);
-            ctx.fillText('Y', 20, -canvas.height/2 + 20);
+            // Dibujar etiquetas de los cuadrantes con colores distintivos
+            ctx.font = 'bold 18px Inter, Arial, sans-serif';
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillText('I', 100, -100);
+            ctx.fillStyle = '#4ecdc4';
+            ctx.fillText('II', -100, -100);
+            ctx.fillStyle = '#45b7d1';
+            ctx.fillText('III', -100, 100);
+            ctx.fillStyle = '#f39c12';
+            ctx.fillText('IV', 100, 100);
+            
+            // Etiquetas de ejes
+            ctx.font = 'bold 16px Inter, Arial, sans-serif';
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillText('X', canvas.width/2 - 25, 25);
+            ctx.fillText('Y', 25, -canvas.height/2 + 25);
             
             // Dibujar punto si hay coordenadas
             const x = parseFloat(document.getElementById('x').value);
@@ -166,24 +213,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isNaN(x) && !isNaN(y)) {
                 ctx.scale(1, -1); // Volver a la escala original para dibujar el punto
                 
-                // Dibujar círculo de fondo blanco
+                // Determinar color del punto según el cuadrante
+                let pointColor = '#ff6b6b'; // Rojo por defecto
+                if (x > 0 && y > 0) pointColor = '#ff6b6b'; // Cuadrante I - Rojo
+                else if (x < 0 && y > 0) pointColor = '#4ecdc4'; // Cuadrante II - Turquesa
+                else if (x < 0 && y < 0) pointColor = '#45b7d1'; // Cuadrante III - Azul
+                else if (x > 0 && y < 0) pointColor = '#f39c12'; // Cuadrante IV - Naranja
+                else if (x === 0 && y === 0) pointColor = '#9b59b6'; // Origen - Púrpura
+                else if (x === 0) pointColor = '#e74c3c'; // Eje Y - Rojo oscuro
+                else if (y === 0) pointColor = '#27ae60'; // Eje X - Verde
+                
+                // Dibujar sombra del punto
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 10;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+                
+                // Dibujar círculo de fondo blanco con borde
                 ctx.beginPath();
-                ctx.arc(x * scale, y * scale, 6, 0, 2 * Math.PI);
+                ctx.arc(x * scale, y * scale, 12, 0, 2 * Math.PI);
                 ctx.fillStyle = 'white';
                 ctx.fill();
-                
-                // Dibujar punto
-                ctx.beginPath();
-                ctx.arc(x * scale, y * scale, 5, 0, 2 * Math.PI);
-                ctx.fillStyle = 'red';
-                ctx.fill();
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 1;
+                ctx.strokeStyle = pointColor;
+                ctx.lineWidth = 3;
                 ctx.stroke();
                 
-                // Dibujar líneas punteadas hasta los ejes
-                ctx.setLineDash([5, 3]);
-                ctx.strokeStyle = '#666';
+                // Dibujar punto principal
+                ctx.shadowColor = 'transparent';
+                ctx.beginPath();
+                ctx.arc(x * scale, y * scale, 8, 0, 2 * Math.PI);
+                ctx.fillStyle = pointColor;
+                ctx.fill();
+                
+                // Dibujar líneas punteadas hasta los ejes con colores
+                ctx.setLineDash([8, 4]);
+                ctx.strokeStyle = pointColor;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = 0.7;
                 ctx.beginPath();
                 ctx.moveTo(x * scale, 0);
                 ctx.lineTo(x * scale, y * scale);
@@ -191,12 +257,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ctx.lineTo(x * scale, y * scale);
                 ctx.stroke();
                 ctx.setLineDash([]);
+                ctx.globalAlpha = 1;
                 
-                // Mostrar coordenadas junto al punto
+                // Mostrar coordenadas con estilo mejorado
                 ctx.scale(1, -1); // Invertir para escribir texto
-                ctx.font = '12px Arial';
-                ctx.fillStyle = '#000';
-                ctx.fillText(`(${x}, ${y})`, x * scale + 10, -y * scale - 10);
+                ctx.font = 'bold 16px Inter, Arial, sans-serif';
+                ctx.fillStyle = pointColor;
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 3;
+                
+                const coordText = `(${x}, ${y})`;
+                const textX = x * scale + 15;
+                const textY = -y * scale - 15;
+                
+                // Sombra del texto
+                ctx.strokeText(coordText, textX, textY);
+                ctx.fillText(coordText, textX, textY);
+                
+                // Dibujar un pequeño indicador de cuadrante
+                ctx.font = 'bold 12px Inter, Arial, sans-serif';
+                ctx.fillStyle = pointColor;
+                let quadrantText = '';
+                if (x > 0 && y > 0) quadrantText = 'Cuadrante I';
+                else if (x < 0 && y > 0) quadrantText = 'Cuadrante II';
+                else if (x < 0 && y < 0) quadrantText = 'Cuadrante III';
+                else if (x > 0 && y < 0) quadrantText = 'Cuadrante IV';
+                else if (x === 0 && y === 0) quadrantText = 'Origen';
+                else if (x === 0) quadrantText = 'Eje Y';
+                else if (y === 0) quadrantText = 'Eje X';
+                
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.strokeText(quadrantText, textX, textY + 20);
+                ctx.fillText(quadrantText, textX, textY + 20);
             }
             
             // Agregar el canvas al DOM
@@ -205,11 +298,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             container.appendChild(canvas);
         }
 
+        // Efecto de partículas interactivas
+        document.addEventListener('mousemove', function(e) {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.02;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                particle.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Animación de entrada para las reglas de cuadrantes
+        const quadrantRules = document.querySelectorAll('.quadrant-rule');
+        quadrantRules.forEach((rule, index) => {
+            rule.style.animationDelay = `${index * 0.1}s`;
+            rule.style.animation = 'slideUp 0.6s ease-out forwards';
+        });
+
         // Dibujar cuando se envía el formulario y cuando se cambian los valores
         if (document.querySelector('.result')) {
             drawPlane();
             document.getElementById('x').addEventListener('input', drawPlane);
             document.getElementById('y').addEventListener('input', drawPlane);
+        }
+
+        // Efecto de hover para las reglas de cuadrantes
+        quadrantRules.forEach(rule => {
+            rule.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px) scale(1.02)';
+            });
+            
+            rule.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Animación del icono de la página
+        const pageIcon = document.querySelector('.page-icon');
+        if (pageIcon) {
+            pageIcon.style.animation = 'bounce 2s infinite';
         }
     </script>
 </body>
