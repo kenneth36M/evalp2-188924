@@ -17,7 +17,10 @@ if (!isset($_SESSION['user_id'])) {
 <body>
     <div class="dashboard-container">
         <h2>Bienvenido, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
-        <a href="logout.php" class="logout-btn">Cerrar Sesión</a>
+        <div class="menu-options">
+            <a href="calculos.php" class="menu-btn">Calcular Áreas y Volúmenes</a>
+            <a href="logout.php" class="logout-btn">Cerrar Sesión</a>
+        </div>
     </div>
 </body>
 </html>
