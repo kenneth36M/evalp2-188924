@@ -321,50 +321,90 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     quadrantDescription = 'Sobre el eje horizontal';
                 }
                 
+                // Calcular posición exacta del punto
+                const pointX = x * scale;
+                const pointY = y * scale;
+                
                 // Dibujar área de influencia del punto
-                ctx.fillStyle = pointColor + '20';
+                ctx.fillStyle = pointColor + '15';
                 ctx.beginPath();
-                ctx.arc(x * scale, y * scale, 25, 0, 2 * Math.PI);
+                ctx.arc(pointX, pointY, 30, 0, 2 * Math.PI);
                 ctx.fill();
                 
-                // Dibujar sombra del punto
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-                ctx.shadowBlur = 15;
-                ctx.shadowOffsetX = 3;
-                ctx.shadowOffsetY = 3;
-                
-                // Dibujar círculo de fondo blanco con borde grueso
+                // Dibujar círculo de fondo blanco más grande para mejor visibilidad
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 8;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
                 ctx.beginPath();
-                ctx.arc(x * scale, y * scale, 15, 0, 2 * Math.PI);
+                ctx.arc(pointX, pointY, 18, 0, 2 * Math.PI);
                 ctx.fillStyle = 'white';
                 ctx.fill();
+                
+                // Dibujar borde del punto
+                ctx.shadowColor = 'transparent';
                 ctx.strokeStyle = pointColor;
-                ctx.lineWidth = 4;
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.arc(pointX, pointY, 18, 0, 2 * Math.PI);
                 ctx.stroke();
                 
                 // Dibujar punto principal con gradiente
-                ctx.shadowColor = 'transparent';
-                const pointGradient = ctx.createRadialGradient(x * scale, y * scale, 0, x * scale, y * scale, 10);
+                const pointGradient = ctx.createRadialGradient(pointX, pointY, 0, pointX, pointY, 12);
                 pointGradient.addColorStop(0, pointColor);
+                pointGradient.addColorStop(0.7, pointColor);
                 pointGradient.addColorStop(1, pointColor + '80');
                 ctx.fillStyle = pointGradient;
                 ctx.beginPath();
-                ctx.arc(x * scale, y * scale, 10, 0, 2 * Math.PI);
+                ctx.arc(pointX, pointY, 12, 0, 2 * Math.PI);
                 ctx.fill();
                 
-                // Dibujar líneas punteadas hasta los ejes con colores
-                ctx.setLineDash([10, 5]);
-                ctx.strokeStyle = pointColor;
-                ctx.lineWidth = 3;
-                ctx.globalAlpha = 0.8;
+                // Dibujar punto central más pequeño para precisión
+                ctx.fillStyle = 'white';
                 ctx.beginPath();
-                ctx.moveTo(x * scale, 0);
-                ctx.lineTo(x * scale, y * scale);
-                ctx.moveTo(0, y * scale);
-                ctx.lineTo(x * scale, y * scale);
+                ctx.arc(pointX, pointY, 4, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Dibujar cruz de precisión en el centro exacto
+                ctx.strokeStyle = pointColor;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(pointX - 8, pointY);
+                ctx.lineTo(pointX + 8, pointY);
+                ctx.moveTo(pointX, pointY - 8);
+                ctx.lineTo(pointX, pointY + 8);
+                ctx.stroke();
+                
+                // Dibujar líneas punteadas hasta los ejes con colores
+                ctx.setLineDash([12, 6]);
+                ctx.strokeStyle = pointColor;
+                ctx.lineWidth = 4;
+                ctx.globalAlpha = 0.9;
+                ctx.beginPath();
+                ctx.moveTo(pointX, 0);
+                ctx.lineTo(pointX, pointY);
+                ctx.moveTo(0, pointY);
+                ctx.lineTo(pointX, pointY);
                 ctx.stroke();
                 ctx.setLineDash([]);
                 ctx.globalAlpha = 1;
+                
+                // Dibujar marcadores en los ejes para mostrar la posición exacta
+                ctx.fillStyle = pointColor;
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                
+                // Marcador en eje X
+                ctx.beginPath();
+                ctx.arc(pointX, 0, 6, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                
+                // Marcador en eje Y
+                ctx.beginPath();
+                ctx.arc(0, pointY, 6, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
                 
                 // Mostrar información detallada del punto
                 ctx.scale(1, -1); // Invertir para escribir texto
@@ -373,9 +413,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ctx.strokeStyle = 'white';
                 ctx.lineWidth = 4;
                 
-                const coordText = `(${x}, ${y})`;
-                const textX = x * scale + 20;
-                const textY = -y * scale - 20;
+                // Mostrar coordenadas con mayor precisión
+                const coordText = `(${x.toFixed(2)}, ${y.toFixed(2)})`;
+                const textX = pointX + 25;
+                const textY = -pointY - 25;
                 
                 // Sombra del texto de coordenadas
                 ctx.strokeText(coordText, textX, textY);
@@ -395,23 +436,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ctx.strokeText(quadrantDescription, textX, textY + 45);
                 ctx.fillText(quadrantDescription, textX, textY + 45);
                 
-                // Dibujar líneas de referencia adicionales
+                // Calcular y mostrar distancia desde el origen
+                const distance = Math.sqrt(x * x + y * y);
+                const distanceText = `Distancia: ${distance.toFixed(2)}`;
+                ctx.strokeText(distanceText, textX, textY + 65);
+                ctx.fillText(distanceText, textX, textY + 65);
+                
+                // Dibujar líneas de referencia adicionales más precisas
                 ctx.scale(1, -1);
-                ctx.strokeStyle = pointColor + '40';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([3, 3]);
+                ctx.strokeStyle = pointColor + '50';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
                 
-                // Línea horizontal de referencia
+                // Línea horizontal de referencia (Y = constante)
                 ctx.beginPath();
-                ctx.moveTo(-canvas.width/2, y * scale);
-                ctx.lineTo(canvas.width/2, y * scale);
+                ctx.moveTo(-canvas.width/2, pointY);
+                ctx.lineTo(canvas.width/2, pointY);
                 ctx.stroke();
                 
-                // Línea vertical de referencia
+                // Línea vertical de referencia (X = constante)
                 ctx.beginPath();
-                ctx.moveTo(x * scale, -canvas.height/2);
-                ctx.lineTo(x * scale, canvas.height/2);
+                ctx.moveTo(pointX, -canvas.height/2);
+                ctx.lineTo(pointX, canvas.height/2);
                 ctx.stroke();
+                
+                // Dibujar etiquetas de coordenadas en los ejes
+                ctx.font = 'bold 12px Inter, Arial, sans-serif';
+                ctx.fillStyle = pointColor;
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                
+                // Etiqueta X en el eje horizontal
+                const xLabel = `X = ${x}`;
+                ctx.strokeText(xLabel, pointX + 10, 15);
+                ctx.fillText(xLabel, pointX + 10, 15);
+                
+                // Etiqueta Y en el eje vertical
+                const yLabel = `Y = ${y}`;
+                ctx.strokeText(yLabel, 15, -pointY + 10);
+                ctx.fillText(yLabel, 15, -pointY + 10);
                 
                 ctx.setLineDash([]);
             }
