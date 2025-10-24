@@ -102,43 +102,101 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Visualización del plano cartesiano
         function drawPlane() {
             const canvas = document.createElement('canvas');
-            canvas.width = 300;
-            canvas.height = 300;
+            canvas.width = 400;
+            canvas.height = 400;
             const ctx = canvas.getContext('2d');
+            const scale = 40; // Escala para las coordenadas (40 píxeles = 1 unidad)
             
             // Configurar el plano
-            ctx.translate(150, 150);
+            ctx.translate(canvas.width/2, canvas.height/2);
             ctx.scale(1, -1);
+
+            // Dibujar cuadrícula
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 0.5;
+            for(let i = -canvas.width/2; i <= canvas.width/2; i += scale) {
+                // Líneas verticales
+                ctx.beginPath();
+                ctx.moveTo(i, -canvas.height/2);
+                ctx.lineTo(i, canvas.height/2);
+                ctx.stroke();
+                // Líneas horizontales
+                ctx.beginPath();
+                ctx.moveTo(-canvas.width/2, i);
+                ctx.lineTo(canvas.width/2, i);
+                ctx.stroke();
+            }
             
-            // Dibujar ejes
-            ctx.beginPath();
-            ctx.moveTo(-150, 0);
-            ctx.lineTo(150, 0);
-            ctx.moveTo(0, -150);
-            ctx.lineTo(0, 150);
+            // Dibujar ejes principales
             ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-canvas.width/2, 0);
+            ctx.lineTo(canvas.width/2, 0);
+            ctx.moveTo(0, -canvas.height/2);
+            ctx.lineTo(0, canvas.height/2);
             ctx.stroke();
-            
-            // Dibujar etiquetas de los cuadrantes
-            ctx.scale(1, -1); // Revertir la escala para el texto
+
+            // Dibujar marcas en los ejes
+            ctx.scale(1, -1); // Invertir para el texto
             ctx.font = '12px Arial';
+            ctx.fillStyle = '#333';
+            for(let i = -4; i <= 4; i++) {
+                if(i !== 0) {
+                    // Marcas en X
+                    ctx.fillText(i.toString(), i * scale - 5, 20);
+                    // Marcas en Y
+                    ctx.fillText(i.toString(), 10, -i * scale + 5);
+                }
+            }
+
+            // Dibujar etiquetas de los cuadrantes
+            ctx.font = '14px Arial';
             ctx.fillStyle = '#666';
-            ctx.fillText('I', 60, -60);
-            ctx.fillText('II', -60, -60);
-            ctx.fillText('III', -60, 60);
-            ctx.fillText('IV', 60, 60);
-            ctx.fillText('X', 140, -5);
-            ctx.fillText('Y', 5, -140);
-            ctx.scale(1, -1); // Volver a la escala original
+            ctx.fillText('I', 80, -80);
+            ctx.fillText('II', -80, -80);
+            ctx.fillText('III', -80, 80);
+            ctx.fillText('IV', 80, 80);
+            ctx.fillText('X', canvas.width/2 - 20, 20);
+            ctx.fillText('Y', 20, -canvas.height/2 + 20);
             
             // Dibujar punto si hay coordenadas
-            const x = document.getElementById('x').value;
-            const y = document.getElementById('y').value;
-            if (x && y) {
+            const x = parseFloat(document.getElementById('x').value);
+            const y = parseFloat(document.getElementById('y').value);
+            if (!isNaN(x) && !isNaN(y)) {
+                ctx.scale(1, -1); // Volver a la escala original para dibujar el punto
+                
+                // Dibujar círculo de fondo blanco
                 ctx.beginPath();
-                ctx.arc(x * 30, y * 30, 5, 0, 2 * Math.PI);
+                ctx.arc(x * scale, y * scale, 6, 0, 2 * Math.PI);
+                ctx.fillStyle = 'white';
+                ctx.fill();
+                
+                // Dibujar punto
+                ctx.beginPath();
+                ctx.arc(x * scale, y * scale, 5, 0, 2 * Math.PI);
                 ctx.fillStyle = 'red';
                 ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                // Dibujar líneas punteadas hasta los ejes
+                ctx.setLineDash([5, 3]);
+                ctx.strokeStyle = '#666';
+                ctx.beginPath();
+                ctx.moveTo(x * scale, 0);
+                ctx.lineTo(x * scale, y * scale);
+                ctx.moveTo(0, y * scale);
+                ctx.lineTo(x * scale, y * scale);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Mostrar coordenadas junto al punto
+                ctx.scale(1, -1); // Invertir para escribir texto
+                ctx.font = '12px Arial';
+                ctx.fillStyle = '#000';
+                ctx.fillText(`(${x}, ${y})`, x * scale + 10, -y * scale - 10);
             }
             
             // Agregar el canvas al DOM
@@ -147,9 +205,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             container.appendChild(canvas);
         }
 
-        // Dibujar cuando se envía el formulario
+        // Dibujar cuando se envía el formulario y cuando se cambian los valores
         if (document.querySelector('.result')) {
             drawPlane();
+            document.getElementById('x').addEventListener('input', drawPlane);
+            document.getElementById('y').addEventListener('input', drawPlane);
         }
     </script>
 </body>

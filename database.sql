@@ -12,6 +12,6 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Insertar un usuario de prueba
 -- Usuario: admin
--- Contraseña: admin123
+-- Contraseña: 12345
 INSERT INTO users (username, password) VALUES 
-('admin', '$2y$10$8AQK9.BeLKSAJ9kf6nZ4/.wzG9mPUaJfgzzrMxl0Pc0QhVABAO3F.');
+('admin', '$2y$10$hxzqDKzThJPZc2ZXXQqCa.Y1TgEhV81zq0nZkzWc6c1ezBsCOE2E6');

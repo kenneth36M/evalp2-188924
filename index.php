@@ -20,7 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
         $result = $stmt->get_result();
         if ($row = $result->fetch_assoc()) {
-            if (password_verify($password, $row['password'])) {
+            // Debugging
+            error_log("Usuario encontrado: " . $row['username']);
+            error_log("Hash almacenado: " . $row['password']);
+            error_log("Contraseña ingresada: " . $password);
+            
+            $verify = password_verify($password, $row['password']);
+            error_log("Resultado de verificación: " . ($verify ? "true" : "false"));
+            
+            if ($verify) {
                 $_SESSION['user_id'] = $row['id'];
                 $_SESSION['username'] = $row['username'];
                 $_SESSION['last_login'] = date('Y-m-d H:i:s');
@@ -58,6 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <button type="submit">Iniciar Sesión</button>
         </form>
+        <div class="form-footer">
+            <p>¿No tienes una cuenta? <a href="register.php">Regístrate aquí</a></p>
+        </div>
     </div>
 </body>
 </html>
