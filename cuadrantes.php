@@ -119,6 +119,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ctx.strokeStyle = '#000';
             ctx.stroke();
             
+            // Dibujar etiquetas de los cuadrantes
+            ctx.scale(1, -1); // Revertir la escala para el texto
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#666';
+            ctx.fillText('I', 60, -60);
+            ctx.fillText('II', -60, -60);
+            ctx.fillText('III', -60, 60);
+            ctx.fillText('IV', 60, 60);
+            ctx.fillText('X', 140, -5);
+            ctx.fillText('Y', 5, -140);
+            ctx.scale(1, -1); // Volver a la escala original
+            
             // Dibujar punto si hay coordenadas
             const x = document.getElementById('x').value;
             const y = document.getElementById('y').value;
